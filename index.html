@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>大阪馬拉松應援之旅 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --osaka-blue: #005CAF; --bg-color: #f8f9fa; }
+        body { font-family: sans-serif; background: var(--bg-color); margin:0; padding-bottom: 20px; }
+        .banner { width: 100%; height: 250px; position: relative; background: #87CEEB; }
+        .banner img { width: 100%; height: 100%; object-fit: cover; }
+        .main-card { margin-top: -30px; border-radius: 30px 30px 0 0; background: white; position: relative; z-index: 10; padding: 20px; min-height: 100vh; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); }
+        .date-item.active { background: var(--osaka-blue); color: white; }
+        .itinerary-card { border: 2px solid #333; border-radius: 15px; box-shadow: 4px 4px 0px #333; margin-bottom: 15px; padding: 15px; }
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; background: var(--osaka-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; z-index: 50; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header class="banner">
+        <img src="Gemini_Generated_Image_bjzo0jbjzo0jbjzo.png" alt="Osaka Banner">
+        <div class="absolute bottom-10 right-4 flex space-x-2">
+            <button @click="tab='plan'" :class="tab==='plan'?'bg-blue-600 text-white':'bg-white text-blue-600'" class="p-3 rounded-full shadow-lg"><i data-lucide="calendar"></i></button>
+            <button @click="tab='info'" :class="tab==='info'?'bg-blue-600 text-white':'bg-white text-blue-600'" class="p-3 rounded-full shadow-lg"><i data-lucide="info"></i></button>
+            <button @click="tab='shop'" :class="tab==='shop'?'bg-blue-600 text-white':'bg-white text-blue-600'" class="p-3 rounded-full shadow-lg"><i data-lucide="shopping-cart"></i></button>
+        </div>
+    </header>
+
+    <main class="main-card">
+        <div v-if="tab==='plan'">
+            <div class="bg-blue-50 p-3 rounded-xl mb-4 flex justify-between items-center border border-blue-100">
+                <div><span class="text-2xl font-bold">8°C</span> <span class="text-xs text-gray-500 ml-2">大阪市 體感 6°C</span></div>
+                <i data-lucide="cloud-sun" class="text-yellow-500"></i>
+            </div>
+            <div class="flex overflow-x-auto space-x-3 mb-6 pb-2">
+                <div v-for="(d, i) in days" :key="i" @click="selDay=i" :class="selDay===i?'active': 'bg-gray-100 text-gray-400'" class="min-w-[60px] p-2 rounded-xl text-center cursor-pointer">
+                    <div class="text-xs font-bold">{{d.w}}</div><div class="text-lg font-bold">{{d.d}}</div>
+                </div>
+            </div>
+            <div v-for="(item, idx) in itinerary[selDay]" :key="idx">
+                <div class="itinerary-card" @click="goMap(item.n)">
+                    <div class="flex justify-between text-[10px] mb-1"><span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded font-bold">{{item.t}}</span><i data-lucide="navigation" class="w-4 h-4"></i></div>
+                    <div class="font-bold text-lg">{{item.time}} {{item.n}}</div>
+                    <div class="text-sm text-gray-500 mt-1">{{item.note}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="tab==='info'" class="space-y-4">
+            <div class="bg-yellow-50 p-4 rounded-xl border-2 border-dashed border-yellow-200">
+                <h3 class="font-bold mb-2">匯率換算 (0.21)</h3>
+                <input type="number" v-model="jpy" class="w-full p-2 rounded border">
+                <div class="mt-2 text-center text-xl font-bold text-blue-600">≈ NT$ {{ (jpy*0.21).toFixed(0) }}</div>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <h3 class="font-bold mb-2">住宿資訊</h3>
+                <p class="text-sm">Apartment hotel 11 umeda</p>
+                <button @click="goMap('Apartment hotel 11 umeda')" class="mt-2 w-full py-2 bg-black text-white rounded">導航至飯店</button>
+            </div>
+        </div>
+        
+        <div v-if="tab==='shop'" class="grid grid-cols-2 gap-3">
+            <div v-for="s in shops" class="border rounded-xl p-2 bg-gray-50">
+                <div class="h-24 bg-gray-200 rounded-lg mb-1 flex items-center justify-center text-gray-400 text-xs">尚無照片</div>
+                <div class="text-sm font-bold">{{s}}</div>
+            </div>
+        </div>
+    </main>
+    <div class="fab"><i data-lucide="plus"></i></div>
+</div>
+
+<script>
+const { createApp, ref, onMounted, updated } = Vue;
+createApp({
+    setup() {
+        const tab = ref('plan'); const selDay = ref(0); const jpy = ref(1000);
+        const days = [{w:'Fri',d:'2/20'},{w:'Sat',d:'2/21'},{w:'Sun',d:'2/22'},{w:'Mon',d:'2/23'},{w:'Tue',d:'2/24'},{w:'Wed',d:'2/25'}];
+        const itinerary = [
+            [{time:'11:55',n:'抵達關西機場',t:'航班',note:'搭利木津巴士直達梅田'},{time:'15:00',n:'飯店 Check-in',t:'住宿',note:'Apartment hotel 11'},{time:'16:30',n:'心齋橋',t:'景點',note:'固力果拍照'}],
+            [{time:'11:00',n:'INTEX Osaka',t:'其他',note:'爸爸領馬拉松物資'},{time:'18:00',n:'梅田晚餐',t:'美食',note:'高碳水餐點準備'}],
+            [{time:'07:00',n:'大阪府廳前',t:'應援',note:'馬拉松起點送爸爸出發'},{time:'15:00',n:'大阪城公園',t:'應援',note:'終點迎接爸爸'},{time:'18:30',n:'梅田慶功宴',t:'美食',note:'大口吃肉慶功！'}],
+            [{time:'08:00',n:'天橋立',t:'景點',note:'飛龍觀看絕景'},{time:'19:00',n:'梅田',t:'美食',note:'回到市區輕鬆吃'}],
+            [{time:'08:30',n:'木津市場',t:'美食',note:'早餐海鮮丼'},{time:'13:00',n:'勝尾寺',t:'景點',note:'滿滿達摩應援勝利'}],
+            [{time:'11:00',n:'梅田百貨',t:'購物',note:'最後補貨藥妝'},{time:'18:10',n:'關西機場',t:'航班',note:'準備回家！'}]
+        ];
+        const shops = ['合利他命','休足時間','達摩不倒翁','大阪燒醬'];
+        const goMap = (n) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n)}`);
+        onMounted(() => lucide.createIcons());
+        updated(() => lucide.createIcons());
+        return { tab, selDay, jpy, days, itinerary, shops, goMap };
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
