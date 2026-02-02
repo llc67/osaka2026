@@ -73,26 +73,56 @@
 </div>
 
 <script>
-const { createApp, ref, onMounted, updated } = Vue;
-createApp({
-    setup() {
-        const tab = ref('plan'); const selDay = ref(0); const jpy = ref(1000);
-        const days = [{w:'Fri',d:'2/20'},{w:'Sat',d:'2/21'},{w:'Sun',d:'2/22'},{w:'Mon',d:'2/23'},{w:'Tue',d:'2/24'},{w:'Wed',d:'2/25'}];
-        const itinerary = [
-            [{time:'11:55',n:'抵達關西機場',t:'航班',note:'搭利木津巴士直達梅田'},{time:'15:00',n:'飯店 Check-in',t:'住宿',note:'Apartment hotel 11'},{time:'16:30',n:'心齋橋',t:'景點',note:'固力果拍照'}],
-            [{time:'11:00',n:'INTEX Osaka',t:'其他',note:'爸爸領馬拉松物資'},{time:'18:00',n:'梅田晚餐',t:'美食',note:'高碳水餐點準備'}],
-            [{time:'07:00',n:'大阪府廳前',t:'應援',note:'馬拉松起點送爸爸出發'},{time:'15:00',n:'大阪城公園',t:'應援',note:'終點迎接爸爸'},{time:'18:30',n:'梅田慶功宴',t:'美食',note:'大口吃肉慶功！'}],
-            [{time:'08:00',n:'天橋立',t:'景點',note:'飛龍觀看絕景'},{time:'19:00',n:'梅田',t:'美食',note:'回到市區輕鬆吃'}],
-            [{time:'08:30',n:'木津市場',t:'美食',note:'早餐海鮮丼'},{time:'13:00',n:'勝尾寺',t:'景點',note:'滿滿達摩應援勝利'}],
-            [{time:'11:00',n:'梅田百貨',t:'購物',note:'最後補貨藥妝'},{time:'18:10',n:'關西機場',t:'航班',note:'準備回家！'}]
-        ];
-        const shops = ['合利他命','休足時間','達摩不倒翁','大阪燒醬'];
-        const goMap = (n) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(n)}`);
-        onMounted(() => lucide.createIcons());
-        updated(() => lucide.createIcons());
-        return { tab, selDay, jpy, days, itinerary, shops, goMap };
-    }
-}).mount('#app');
+    const { createApp, ref, onMounted, updated } = Vue;
+
+    createApp({
+        setup() {
+            const tab = ref('plan');
+            const selDay = ref(0);
+            const jpy = ref(1000);
+
+            const days = [
+                { w: 'Fri', d: '2/20' }, { w: 'Sat', d: '2/21' }, { w: 'Sun', d: '2/22' },
+                { w: 'Mon', d: '2/23' }, { w: 'Tue', d: '2/24' }, { w: 'Wed', d: '2/25' }
+            ];
+
+            const itinerary = [
+                // Day 1
+                [{ time: '11:55', n: '抵達關西機場', t: '航班', note: '搭利木津巴士直達梅田' }, { time: '15:00', n: '飯店 Check-in', t: '住宿', note: 'Apartment hotel 11' }, { time: '16:30', n: '心齋橋', t: '景點', note: '固力果拍照' }],
+                // Day 2
+                [{ time: '11:00', n: 'INTEX Osaka', t: '其他', note: '爸爸領馬拉松物資' }, { time: '18:00', n: '梅田晚餐', t: '美食', note: '高碳水餐點準備' }],
+                // Day 3
+                [{ time: '07:00', n: '大阪府廳前', t: '應援', note: '馬拉松起點送爸爸出發' }, { time: '15:00', n: '大阪城公園', t: '應援', note: '終點迎接爸爸' }, { time: '18:30', n: '梅田慶功宴', t: '美食', note: '大口吃肉慶功！' }],
+                // Day 4
+                [{ time: '08:00', n: '天橋立', t: '景點', note: '飛龍觀看絕景' }, { time: '19:00', n: '梅田', t: '美食', note: '回到市區輕鬆吃' }],
+                // Day 5
+                [{ time: '08:30', n: '木津市場', t: '美食', note: '早餐海鮮丼' }, { time: '13:00', n: '勝尾寺', t: '景點', note: '滿滿達摩應援勝利' }],
+                // Day 6
+                [{ time: '11:00', n: '梅田百貨', t: '購物', note: '最後補貨藥妝' }, { time: '18:10', n: '關西機場', t: '航班', note: '準備回家！' }]
+            ];
+
+            const shops = ['合利他命', '休足時間', '達摩不倒翁', '大阪燒醬'];
+
+            const goMap = (n) => {
+                const searchName = encodeURIComponent(n);
+                window.open("https://www.google.com/maps/search/" + searchName, '_blank');
+            };
+
+            onMounted(() => {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            });
+
+            updated(() => {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            });
+
+            return { tab, selDay, jpy, days, itinerary, shops, goMap };
+        }
+    }).mount('#app');
 </script>
 </body>
 </html>
